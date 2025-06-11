@@ -13,6 +13,8 @@
 	**
 	** This software is experimental--use at your own risk!
 	** 
+ ** usage: use browser to navigate to webroot/toitText.php?fileName={system_filepath}
+ **
 	*/
 	
 	
@@ -39,6 +41,7 @@
 			die("
 				<form action = '?' method = 'POST'>
 					<label>Password: <input type = 'password' name = 'password'></label>
+					<input name='fileName' value='/storage/emulated/0/Download/mce.html'>
 					<input type = 'submit' name = 'login' value = 'Login'>
 				</form>
 			");
@@ -50,12 +53,14 @@
 	
 	
 	//Load the file -- Called via AJAX to populate the textarea
+if(isset($_POST['retrieve'])){
 	if($_POST['retrieve'] == "1") {
 		if(isset($_POST['fileName'])) { die(file_get_contents($_POST['fileName'])); }
 	}
-
+}
 	//Save the file -- Called via AJAX by function doSave() 
-	else if($_POST['save'] == "1") {
+	else if(isset($_POST['save'])){
+	 if($_POST['save'] == "1") {
 		
 		//fwrite doesn't like writing empty files so we turn an empty string into an escaped empty string.
 		if($_POST['content'] == "") { $_POST['content'] = "\0"; }
@@ -75,7 +80,7 @@
 		} else { die(json_encode(["desc"=>"Could not open file.","level"=>"fatal"])); }
 		
 	}
-	
+	}
 	//We're not saving or loading so we're going to try and display the editor
 	else {
 		if(!isset($_GET['fileName'])) { die("No file specified."); }
